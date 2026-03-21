@@ -1,0 +1,243 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: debezium-connectors
+  namespace: serendibmall
+data:
+  product-connector.json: |
+    {
+      "name": "product-events-connector",
+      "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "database.hostname": "serendibmall-postgresql",
+        "database.port": "5432",
+        "database.user": "postgres",
+        "database.password": "postgres",
+        "database.dbname": "product_db",
+        "topic.prefix": "dbserver1",
+        "database.server.name": "dbserver1",
+        "table.include.list": "public.product_events",
+        "plugin.name": "pgoutput",
+        "publication.autocreate.mode": "filtered",
+        "slot.name": "debezium_product_slot",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "false",
+        "value.converter.schemas.enable": "false",
+        "transforms": "outbox",
+        "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+        "transforms.outbox.table.field.event.key": "aggregate_id",
+        "transforms.outbox.table.field.event.type": "event_type",
+        "transforms.outbox.table.field.event.payload": "payload",
+        "transforms.outbox.route.by.field": "aggregate_type",
+        "transforms.outbox.route.topic.replacement": "product.events",
+        "transforms.outbox.table.fields.additional.placement": "event_type:header"
+      }
+    }
+  order-connector.json: |
+    {
+      "name": "order-events-connector",
+      "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "database.hostname": "serendibmall-postgresql",
+        "database.port": "5432",
+        "database.user": "postgres",
+        "database.password": "postgres",
+        "database.dbname": "order_db",
+        "topic.prefix": "dbserver1",
+        "database.server.name": "dbserver1",
+        "table.include.list": "public.order_outbox",
+        "plugin.name": "pgoutput",
+        "publication.autocreate.mode": "filtered",
+        "slot.name": "debezium_order_slot",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "false",
+        "value.converter.schemas.enable": "false",
+        "transforms": "outbox",
+        "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+        "transforms.outbox.table.field.event.key": "aggregate_id",
+        "transforms.outbox.table.field.event.type": "event_type",
+        "transforms.outbox.table.field.event.payload": "payload",
+        "transforms.outbox.route.by.field": "aggregate_type",
+        "transforms.outbox.route.topic.replacement": "order.events",
+        "transforms.outbox.table.fields.additional.placement": "event_type:header"
+      }
+    }
+  inventory-connector.json: |
+    {
+      "name": "inventory-outbox-connector",
+      "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "database.hostname": "serendibmall-postgresql",
+        "database.port": "5432",
+        "database.user": "postgres",
+        "database.password": "postgres",
+        "database.dbname": "inventory_db",
+        "topic.prefix": "dbserver1",
+        "database.server.name": "dbserver1",
+        "table.include.list": "public.inventory_outbox",
+        "plugin.name": "pgoutput",
+        "publication.autocreate.mode": "filtered",
+        "slot.name": "debezium_inventory_outbox_slot",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "false",
+        "value.converter.schemas.enable": "false",
+        "transforms": "outbox",
+        "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+        "transforms.outbox.table.field.event.key": "aggregate_id",
+        "transforms.outbox.table.field.event.type": "event_type",
+        "transforms.outbox.table.field.event.payload": "payload",
+        "transforms.outbox.route.by.field": "aggregate_type",
+        "transforms.outbox.route.topic.replacement": "inventory.events",
+        "transforms.outbox.table.fields.additional.placement": "event_type:header"
+      }
+    }
+  payment-connector.json: |
+    {
+      "name": "payment-outbox-connector",
+      "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "database.hostname": "serendibmall-postgresql",
+        "database.port": "5432",
+        "database.user": "postgres",
+        "database.password": "postgres",
+        "database.dbname": "payment_db",
+        "topic.prefix": "dbserver1",
+        "database.server.name": "dbserver1",
+        "table.include.list": "public.payment_outbox",
+        "plugin.name": "pgoutput",
+        "publication.autocreate.mode": "filtered",
+        "slot.name": "debezium_payment_slot",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "false",
+        "value.converter.schemas.enable": "false",
+        "transforms": "outbox",
+        "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+        "transforms.outbox.table.field.event.key": "aggregate_id",
+        "transforms.outbox.table.field.event.type": "event_type",
+        "transforms.outbox.table.field.event.payload": "payload",
+        "transforms.outbox.route.by.field": "aggregate_type",
+        "transforms.outbox.route.topic.replacement": "payment.events",
+        "transforms.outbox.table.fields.additional.placement": "event_type:header"
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debezium-connect
+  namespace: serendibmall
+  labels:
+    app: debezium-connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: debezium-connect
+  template:
+    metadata:
+      labels:
+        app: debezium-connect
+    spec:
+      containers:
+        - name: debezium
+          image: quay.io/debezium/connect:2.5
+          ports:
+            - containerPort: 8083
+              name: http
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: "serendibmall-redpanda:9093"
+            - name: GROUP_ID
+              value: "debezium-connect-cluster"
+            - name: CONFIG_STORAGE_TOPIC
+              value: "debezium_connect_configs"
+            - name: OFFSET_STORAGE_TOPIC
+              value: "debezium_connect_offsets"
+            - name: STATUS_STORAGE_TOPIC
+              value: "debezium_connect_status"
+            - name: KEY_CONVERTER
+              value: "org.apache.kafka.connect.json.JsonConverter"
+            - name: VALUE_CONVERTER
+              value: "org.apache.kafka.connect.json.JsonConverter"
+            - name: CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE
+              value: "false"
+            - name: CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE
+              value: "false"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8083
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 10
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+              cpu: 500m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: debezium-connect
+  namespace: serendibmall
+spec:
+  selector:
+    app: debezium-connect
+  ports:
+    - port: 8083
+      targetPort: 8083
+      name: http
+  type: ClusterIP
+---
+# Job that auto-registers all 4 Debezium connectors after Connect is ready
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: debezium-register-connectors
+  namespace: serendibmall
+spec:
+  backoffLimit: 10
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: register
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for Debezium Connect to be ready..."
+              until curl -sf http://debezium-connect:8083/ > /dev/null 2>&1; do
+                echo "  Not ready yet, retrying in 5s..."
+                sleep 5
+              done
+              echo "Debezium Connect is ready!"
+
+              for connector in /connectors/*.json; do
+                name=$(basename "$connector" .json)
+                echo ""
+                echo "Registering connector: ${name}..."
+                curl -sf -X POST http://debezium-connect:8083/connectors \
+                  -H "Content-Type: application/json" \
+                  -d @"$connector"
+                echo "  ✅ ${name} registered"
+              done
+
+              echo ""
+              echo "All connectors registered! Final status:"
+              curl -sf http://debezium-connect:8083/connectors | python3 -m json.tool || true
+          volumeMounts:
+            - name: connector-configs
+              mountPath: /connectors
+      volumes:
+        - name: connector-configs
+          configMap:
+            name: debezium-connectors
