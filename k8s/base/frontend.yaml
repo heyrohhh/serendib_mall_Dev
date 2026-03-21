@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serendibmall-frontend
+  namespace: serendibmall
+  labels:
+    app: serendibmall-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: serendibmall-frontend
+  template:
+    metadata:
+      labels:
+        app: serendibmall-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/malisha4065/serendibmall/serendibmall-frontend:latest
+          ports:
+            - containerPort: 80
+              name: http
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: serendibmall-frontend
+  namespace: serendibmall
+spec:
+  selector:
+    app: serendibmall-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
+  type: ClusterIP

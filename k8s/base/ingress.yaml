@@ -8,6 +8,26 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
+    - host: serendibmall.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: serendibmall-frontend
+                port:
+                  number: 80
+    - host: auth.serendibmall.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: serendibmall-keycloak
+                port:
+                  number: 8080
     - host: api.serendibmall.local
       http:
         paths:

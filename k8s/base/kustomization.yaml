@@ -8,12 +8,21 @@ resources:
   - configmap.yaml
   - secrets.yaml
   - bff.yaml
+  - frontend.yaml
+  - keycloak-config.yaml
+  - keycloak.yaml
   - product-command.yaml
   - product-query.yaml
   - inventory.yaml
   - order.yaml
   - payment.yaml
   - ingress.yaml
+
+secretGenerator:
+  - name: keycloak-secrets
+    literals:
+      - GOOGLE_CLIENT_ID=placeholder_id
+      - GOOGLE_CLIENT_SECRET=placeholder_secret
 
 commonLabels:
   app.kubernetes.io/part-of: serendibmall
