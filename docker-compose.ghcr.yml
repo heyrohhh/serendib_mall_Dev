@@ -259,7 +259,6 @@ services:
       - SPRING_GRPC_CLIENT_CHANNELS_INVENTORY_SERVICE_ADDRESS=static://inventory-service:9091
       - SPRING_GRPC_CLIENT_CHANNELS_ORDER_SERVICE_ADDRESS=static://order-service:9090
       - SPRING_GRPC_CLIENT_CHANNELS_PRODUCT_COMMAND_SERVICE_ADDRESS=static://product-command-service:9093
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/serendibmall
       - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/serendibmall/protocol/openid-connect/certs
     ports:
       - "8080:8080"
