@@ -30,7 +30,7 @@ spec:
                 name: db-credentials
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://postgres.serendibmall.svc.cluster.local:5432/product_db"
+              value: "jdbc:postgresql://serendibmall-postgresql.serendibmall.svc.cluster.local:5432/product_db"
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
