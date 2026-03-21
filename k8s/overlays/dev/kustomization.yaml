@@ -4,35 +4,42 @@ kind: Kustomization
 namespace: serendibmall
 
 resources:
-  - ../../base
+- ../../base
 
 patches:
-  - patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-    target:
-      kind: Deployment
-      labelSelector: "app.kubernetes.io/part-of=serendibmall"
+- patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 1
+  target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=serendibmall
 
 configMapGenerator:
-  - name: common-config
-    behavior: merge
-    literals:
-      - SPRING_PROFILES_ACTIVE=dev
+- behavior: merge
+  literals:
+  - SPRING_PROFILES_ACTIVE=dev
+  name: common-config
 
 images:
-  - name: ghcr.io/malisha4065/serendibmall/serendibmall-bff
-    newTag: main
-  - name: ghcr.io/malisha4065/serendibmall/serendibmall-frontend
-    newTag: main
-  - name: ghcr.io/malisha4065/serendibmall/product-command-service
-    newTag: main
-  - name: ghcr.io/malisha4065/serendibmall/product-query-service
-    newTag: main
-  - name: ghcr.io/malisha4065/serendibmall/inventory-service
-    newTag: main
-  - name: ghcr.io/malisha4065/serendibmall/order-service
-    newTag: main
-  - name: ghcr.io/malisha4065/serendibmall/payment-service
-    newTag: main
+- name: ghcr.io/malisha4065/serendibmall/inventory-service
+  newName: ghcr.io/malisha4065/serendibmall/inventory-service
+  newTag: 1e10a6b
+- name: ghcr.io/malisha4065/serendibmall/order-service
+  newName: ghcr.io/malisha4065/serendibmall/order-service
+  newTag: 1e10a6b
+- name: ghcr.io/malisha4065/serendibmall/payment-service
+  newName: ghcr.io/malisha4065/serendibmall/payment-service
+  newTag: 1e10a6b
+- name: ghcr.io/malisha4065/serendibmall/product-command-service
+  newName: ghcr.io/malisha4065/serendibmall/product-command-service
+  newTag: 1e10a6b
+- name: ghcr.io/malisha4065/serendibmall/product-query-service
+  newName: ghcr.io/malisha4065/serendibmall/product-query-service
+  newTag: 1e10a6b
+- name: ghcr.io/malisha4065/serendibmall/serendibmall-bff
+  newName: ghcr.io/malisha4065/serendibmall/serendibmall-bff
+  newTag: 1e10a6b
+- name: ghcr.io/malisha4065/serendibmall/serendibmall-frontend
+  newName: ghcr.io/malisha4065/serendibmall/serendibmall-frontend
+  newTag: 1e10a6b
