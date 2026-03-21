@@ -20,3 +20,19 @@ configMapGenerator:
     behavior: merge
     literals:
       - SPRING_PROFILES_ACTIVE=dev
+
+images:
+  - name: ghcr.io/malisha4065/serendibmall/serendibmall-bff
+    newTag: main
+  - name: ghcr.io/malisha4065/serendibmall/serendibmall-frontend
+    newTag: main
+  - name: ghcr.io/malisha4065/serendibmall/product-command-service
+    newTag: main
+  - name: ghcr.io/malisha4065/serendibmall/product-query-service
+    newTag: main
+  - name: ghcr.io/malisha4065/serendibmall/inventory-service
+    newTag: main
+  - name: ghcr.io/malisha4065/serendibmall/order-service
+    newTag: main
+  - name: ghcr.io/malisha4065/serendibmall/payment-service
+    newTag: main
