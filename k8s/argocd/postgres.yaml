@@ -12,6 +12,11 @@ spec:
     helm:
       valueFiles: []
       values: |
+        image:
+          registry: registry-1.docker.io
+          repository: bitnami/postgresql
+          tag: latest
+        architecture: standalone
         auth:
           postgresPassword: postgres
           database: postgres

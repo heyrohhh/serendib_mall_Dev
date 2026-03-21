@@ -6,6 +6,7 @@ namespace: serendibmall
 resources:
   - namespace.yaml
   - secrets.yaml
+  - keycloak.yaml
   - bff.yaml
   - frontend.yaml
   - debezium.yaml

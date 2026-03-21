@@ -11,6 +11,10 @@ spec:
     targetRevision: "*"
     helm:
       values: |
+        image:
+          registry: registry-1.docker.io
+          repository: bitnami/redis
+          tag: latest
         architecture: standalone
         auth:
           enabled: false
