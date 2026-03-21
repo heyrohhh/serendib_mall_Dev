@@ -1,0 +1,155 @@
+# Keycloak Deployment using official image (replaces Bitnami Helm chart)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-realm
+data:
+  serendibmall-realm.json: |
+    {
+      "realm": "serendibmall",
+      "enabled": true,
+      "sslRequired": "none",
+      "registrationAllowed": true,
+      "registrationEmailAsUsername": false,
+      "loginWithEmailAllowed": true,
+      "duplicateEmailsAllowed": false,
+      "resetPasswordAllowed": true,
+      "editUsernameAllowed": false,
+      "bruteForceProtected": true,
+      "roles": {
+        "realm": [
+          { "name": "user", "description": "Regular customer", "composite": false },
+          { "name": "admin", "description": "Store administrator", "composite": false }
+        ]
+      },
+      "defaultRoles": ["user"],
+      "clients": [
+        {
+          "clientId": "serendibmall-frontend",
+          "name": "SerendibMall Frontend",
+          "enabled": true,
+          "publicClient": true,
+          "directAccessGrantsEnabled": true,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "redirectUris": ["http://localhost:3000/*", "http://localhost:5173/*", "http://serendibmall.local/*"],
+          "webOrigins": ["http://localhost:3000", "http://localhost:5173", "http://serendibmall.local"],
+          "protocol": "openid-connect",
+          "attributes": {
+            "pkce.code.challenge.method": "S256",
+            "post.logout.redirect.uris": "http://localhost:3000/*##http://localhost:5173/*##http://serendibmall.local/*"
+          }
+        }
+      ],
+      "users": [
+        {
+          "username": "admin",
+          "email": "admin@serendibmall.com",
+          "firstName": "Store",
+          "lastName": "Admin",
+          "enabled": true,
+          "emailVerified": true,
+          "credentials": [{ "type": "password", "value": "admin123", "temporary": false }],
+          "realmRoles": ["user", "admin"]
+        },
+        {
+          "username": "customer",
+          "email": "customer@serendibmall.com",
+          "firstName": "Test",
+          "lastName": "Customer",
+          "enabled": true,
+          "emailVerified": true,
+          "credentials": [{ "type": "password", "value": "customer123", "temporary": false }],
+          "realmRoles": ["user"]
+        }
+      ]
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serendibmall-keycloak
+  labels:
+    app: serendibmall-keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: serendibmall-keycloak
+  template:
+    metadata:
+      labels:
+        app: serendibmall-keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:26.2
+          args:
+            - start-dev
+            - --import-realm
+            - --health-enabled=true
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 9000
+              name: health
+          env:
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: "admin"
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              value: "admin"
+            - name: KC_DB
+              value: "postgres"
+            - name: KC_DB_URL
+              value: "jdbc:postgresql://serendibmall-postgresql:5432/postgres"
+            - name: KC_DB_USERNAME
+              value: "postgres"
+            - name: KC_DB_PASSWORD
+              value: "postgres"
+            - name: KC_HTTP_PORT
+              value: "8080"
+            - name: KC_FEATURES
+              value: "preview"
+            - name: JAVA_OPTS_APPEND
+              value: "-Xms128m -Xmx256m"
+          volumeMounts:
+            - name: realm-config
+              mountPath: /opt/keycloak/data/import
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 384Mi
+              cpu: 300m
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 15
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 15
+      volumes:
+        - name: realm-config
+          configMap:
+            name: keycloak-realm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: serendibmall-keycloak
+spec:
+  selector:
+    app: serendibmall-keycloak
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: http
+  type: ClusterIP
