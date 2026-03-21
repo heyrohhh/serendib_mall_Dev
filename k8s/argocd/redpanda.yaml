@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://charts.redpanda.com
     chart: redpanda
-    targetRevision: "*"
+    targetRevision: "25.*"
     helm:
       values: |
         statefulset:
@@ -18,7 +18,7 @@ spec:
             cores: 1
           memory:
             container:
-              max: 1Gi
+              max: 2Gi
         storage:
           persistentVolume:
             size: 2Gi
@@ -35,8 +35,6 @@ spec:
           schemaRegistry:
             enabled: false
         console:
-          enabled: false
-        connectors:
           enabled: false
   destination:
     server: https://kubernetes.default.svc
