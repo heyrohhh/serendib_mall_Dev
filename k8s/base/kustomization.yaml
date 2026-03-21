@@ -5,7 +5,6 @@ namespace: serendibmall
 
 resources:
   - namespace.yaml
-  - configmap.yaml
   - secrets.yaml
   - bff.yaml
   - frontend.yaml
@@ -17,6 +16,15 @@ resources:
   - order.yaml
   - payment.yaml
   - ingress.yaml
+
+configMapGenerator:
+  - name: common-config
+    literals:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=redpanda.serendibmall.svc.cluster.local:29092
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch.serendibmall.svc.cluster.local:9200
+      - SPRING_DATA_REDIS_HOST=redis.serendibmall.svc.cluster.local
+      - SPRING_DATA_REDIS_PORT=6379
 
 secretGenerator:
   - name: keycloak-secrets
