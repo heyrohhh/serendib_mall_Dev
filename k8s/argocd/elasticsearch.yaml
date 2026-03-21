@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: serendibmall-elasticsearch
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.elastic.co
+    chart: elasticsearch
+    targetRevision: "8.*"
+    helm:
+      values: |
+        replicas: 1
+        minimumMasterNodes: 1
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 250m
+          limits:
+            memory: 1Gi
+            cpu: 500m
+        volumeClaimTemplate:
+          resources:
+            requests:
+              storage: 2Gi
+        esConfig:
+          elasticsearch.yml: |
+            xpack.security.enabled: false
+            discovery.type: single-node
+        extraEnvs:
+          - name: ES_JAVA_OPTS
+            value: "-Xms256m -Xmx256m"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: serendibmall
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -8,8 +8,6 @@ resources:
   - secrets.yaml
   - bff.yaml
   - frontend.yaml
-  - keycloak-config.yaml
-  - keycloak.yaml
   - product-command.yaml
   - product-query.yaml
   - inventory.yaml
@@ -20,18 +18,14 @@ resources:
 configMapGenerator:
   - name: common-config
     literals:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=redpanda.serendibmall.svc.cluster.local:29092
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=serendibmall-redpanda:9093
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch.serendibmall.svc.cluster.local:9200
-      - SPRING_DATA_REDIS_HOST=redis.serendibmall.svc.cluster.local
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch-master:9200
+      - SPRING_DATA_REDIS_HOST=serendibmall-redis-master
       - SPRING_DATA_REDIS_PORT=6379
-
-secretGenerator:
-  - name: keycloak-secrets
-    literals:
-      - GOOGLE_CLIENT_ID=placeholder_id
-      - GOOGLE_CLIENT_SECRET=placeholder_secret
 
 commonLabels:
   app.kubernetes.io/part-of: serendibmall
   app.kubernetes.io/managed-by: kustomize
+
