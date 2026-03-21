@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: inventory
-          image: ghcr.io/OWNER/serendibmall/inventory-service:latest
+          image: ghcr.io/malisha4065/serendibmall/inventory-service:main
           ports:
             - containerPort: 8085
               name: http

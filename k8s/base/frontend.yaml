@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/malisha4065/serendibmall/serendibmall-frontend:latest
+          image: ghcr.io/malisha4065/serendibmall/serendibmall-frontend:main
           ports:
             - containerPort: 80
               name: http

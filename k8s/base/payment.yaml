@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: payment
-          image: ghcr.io/OWNER/serendibmall/payment-service:latest
+          image: ghcr.io/malisha4065/serendibmall/payment-service:main
           ports:
             - containerPort: 8089
               name: http

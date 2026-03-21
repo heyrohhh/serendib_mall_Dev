@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: product-query
-          image: ghcr.io/OWNER/serendibmall/product-query-service:latest
+          image: ghcr.io/malisha4065/serendibmall/product-query-service:main
           ports:
             - containerPort: 8081
               name: http

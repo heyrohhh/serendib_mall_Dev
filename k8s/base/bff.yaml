@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: bff
-          image: ghcr.io/OWNER/serendibmall/serendibmall-bff:latest
+          image: ghcr.io/malisha4065/serendibmall/serendibmall-bff:main
           ports:
             - containerPort: 8080
               name: http
