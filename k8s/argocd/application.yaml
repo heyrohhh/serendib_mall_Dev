@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR_USERNAME/serendibmall.git
+    repoURL: https://github.com/Malisha4065/serendib-mall.git
     targetRevision: main
     path: k8s/overlays/dev
   destination:
