@@ -20,11 +20,11 @@ spec:
             size: 2Gi
           resources:
             requests:
-              memory: 256Mi
-              cpu: 250m
+              memory: 64Mi
+              cpu: 100m
             limits:
-              memory: 512Mi
-              cpu: 500m
+              memory: 256Mi
+              cpu: 300m
           configuration: |-
             wal_level = logical
             max_wal_senders = 10

@@ -13,12 +13,20 @@ spec:
       values: |
         statefulset:
           replicas: 1
+          additionalRedpandaCmdFlags:
+            - --smp
+            - "1"
+            - --memory
+            - "384M"
+            - --reserve-memory
+            - "0M"
+            - --overprovisioned
         resources:
           cpu:
             cores: 1
           memory:
             container:
-              max: 2Gi
+              max: 512Mi
         storage:
           persistentVolume:
             size: 2Gi

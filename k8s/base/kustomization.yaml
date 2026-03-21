@@ -28,6 +28,7 @@ configMapGenerator:
       - SPRING_DATA_REDIS_PORT=6379
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
       - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://serendibmall-keycloak:80/realms/serendibmall/protocol/openid-connect/certs
+      - JAVA_TOOL_OPTIONS=-Xms128m -Xmx256m
 
 commonLabels:
   app.kubernetes.io/part-of: serendibmall
